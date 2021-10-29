@@ -68,14 +68,14 @@ func waitInputLetter()rune{//Ожидание ввода буквы
 	return input
 }
 
-func returnAll(quest string,answer string) string {
-	var buf string
-	//for i:=0;i<len(answer);i++{
-	//	buf+="*"
-	//}
-
-	return fmt.Sprintf("Деньги: %d \nЖизни: %d \nВопрос: %s\nСлово: %s",money, hp, quest, buf)
-}
+//func returnAll(quest string,answer string) string {
+//	var buf string
+//	//for i:=0;i<len(answer);i++{
+//	//	buf+="*"
+//	//}
+//
+//	return fmt.Sprintf("Деньги: %d \nЖизни: %d \nВопрос: %s\nСлово: %s",money, hp, quest, buf)
+//}
 
 func main() {
 	rand.Seed(time.Now().Unix()) //Опора для генератора чисел
