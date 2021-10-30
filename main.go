@@ -41,6 +41,7 @@ func codingAnswer(answer string){ //Кодирование слова загад
 	}
 }
 
+
 func firstOut(quest string)string{ //Первый вывод игры
 	return fmt.Sprintf("Деньги: %d \nЖизни: %d \nВопрос: %s \nСлово: %s",money,hp,quest,tryAnswer)
 }
@@ -68,20 +69,56 @@ func waitInputLetter()rune{//Ожидание ввода буквы
 	return input
 }
 
-//func returnAll(quest string,answer string) string {
-//	var buf string
-//	//for i:=0;i<len(answer);i++{
-//	//	buf+="*"
-//	//}
-//
-//	return fmt.Sprintf("Деньги: %d \nЖизни: %d \nВопрос: %s\nСлово: %s",money, hp, quest, buf)
-//}
+func drum(){//Прокрутка барабана
+	giveMoney:=rand.Intn(101)
+	money+=giveMoney
+	fmt.Println("\n\n\n\n",fmt.Sprintf("\nВы получили %d монет",giveMoney))
+}
+
+func checkLetter(letter rune,answer string)string{//Проверка угаданной буквы
+	var buffer = []rune(tryAnswer)
+
+	if strings.Contains(answer,string(letter)) && !strings.Contains(tryAnswer,string(letter)){
+
+		for i,value:=range []rune(answer){
+			if value==letter{
+				buffer[i]=letter
+			}
+		}
+		tryAnswer=string(buffer)
+		return "Верно!"
+	}else{
+		hp--
+		return "Неверно!"
+	}
+}
+
 
 func main() {
 	rand.Seed(time.Now().Unix()) //Опора для генератора чисел
-	//for isGame { //Бесконечный цикл ,пока идет игра
-	quest, answer := generationQuest(createQuest())
-	fmt.Println(quest,answer,len(answer))
-	//fmt.Println(returnAll(quest,answer))
-	//}
+
+	for hp!=0 { //Бесконечный цикл ,пока идет игра
+		var isGame = true
+		tryAnswer=""
+		quest, answer := generationQuest(createQuest())
+		codingAnswer(answer)
+		fmt.Println(firstOut(quest))
+
+		for isGame {
+			err := rollCommand()
+			if err != nil {
+				os.Exit(1)
+			}
+			drum()
+			fmt.Println(firstOut(quest))
+			letter := waitInputLetter()
+			fmt.Println(checkLetter(letter, answer))
+			if hp==0{
+				isGame=false
+			}else if tryAnswer==answer{
+				fmt.Println("\n\n\n\n\nВы угадали!Новое слово:")
+				isGame=false
+			}
+		}
+	}
 }
