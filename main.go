@@ -1,4 +1,5 @@
-package main
+//Package fieldOfDreams игра
+package fieldOfDreams
 
 import (
 	"bufio"
@@ -12,15 +13,17 @@ import (
 	"time"
 )
 
-type questions struct { //Структура для создания образа вопросов
-	quest  string //Вопрос
-	answer string // Ответ на вопрос
+//questions структура для создания образа вопросов.
+type questions struct {
+	quest  string // quest вопрос.
+	answer string // answer ответ на вопрос.
 }
 
-var hp, money int = 3, 0 // Жизни игрока и деньги
-var tryAnswer string     //Попытка отгадки слова
+var hp, money int = 3, 0 // hp жизни игрока money деньги.
+var tryAnswer string     // tryAnswer попытка отгадки слова.
 
-func createQuest() []questions { //Создание среза с вопросами и ответами
+//createQuest создание среза с вопросами и ответами.Функция возвращает срез с вопросами (quest) и верными ответами (answer).
+func createQuest() []questions {
 	slice := []questions{
 		{quest: "Что использовали в Китае для глажки белья вместо утюга?", answer: "сковорода"},
 		{quest: "Как у западных и южных славян назывались селение, деревня, курень?", answer: "жупа"},
@@ -31,22 +34,26 @@ func createQuest() []questions { //Создание среза с вопроса
 	return slice
 }
 
-func generationQuest(slice []questions) (string, string) { // Генерация случайного вопроса и ответа
-	i := rand.Intn(len(slice)) //Генерация индекса для выбора случайного элемента среза
+//generationQuest генерация случайного вопроса и ответа.Функция получает на вход срез с вопросами и ответами ,возвращает случайный элемент из среза.В формате вопрос,ответ.
+func generationQuest(slice []questions) (string, string) {
+	i := rand.Intn(len(slice))
 	return slice[i].quest, slice[i].answer
 }
 
-func codingAnswer(answer string) { //Кодирование слова загаданного
+//codingAnswer кодирование загаданного слова.Функция получает на вход верный ответ и кодирует его в символы "*",записывает закодированное слово в переменную tryAnswer.
+func codingAnswer(answer string) {
 	for i := 0; i < len([]rune(answer)); i++ {
 		tryAnswer += "*"
 	}
 }
 
-func firstOut(quest string) string { //Первый вывод игры
+//firstOut первый вывод игры.Функция получает на вход вопрос и генерирует новую строку с данными(money, hp, quest, tryAnswer),возвращает строку с первым выводом игры.
+func firstOut(quest string) string {
 	return fmt.Sprintf("Деньги: %d \nЖизни: %d \nВопрос: %s \nСлово: %s", money, hp, quest, tryAnswer)
 }
 
-func rollCommand(stdin io.Reader) error { //Ожидание ввода команды /roll от игрока
+//rollCommand ожидание ввода команды /roll от игрока.Функция получает на вход интерфейс io.Reader для чтения потока байтов из консоли,возвращает ошибку если она была.
+func rollCommand(stdin io.Reader) error {
 	rd := bufio.NewReader(stdin)
 	input, err := rd.ReadString('\n')
 	if err != nil {
@@ -59,7 +66,8 @@ func rollCommand(stdin io.Reader) error { //Ожидание ввода кома
 	}
 }
 
-func waitInputLetter(stdin io.Reader) rune { //Ожидание ввода буквы
+//waitInputLetter ожидание ввода буквы.Функция получает на вход интерфейс io.Reader для чтения потока байтов из консоли,возвращает символ,который ввел пользователь.
+func waitInputLetter(stdin io.Reader) rune {
 	rd := bufio.NewReader(stdin)
 	input, _, err := rd.ReadRune()
 	if err != nil {
@@ -68,13 +76,15 @@ func waitInputLetter(stdin io.Reader) rune { //Ожидание ввода бу�
 	return input
 }
 
-func drum() string { //Прокрутка барабана
+//drum прокрутка барабана.Функция возвращает строку с сообщением о получении монет.
+func drum() string {
 	giveMoney := rand.Intn(101)
 	money += giveMoney
 	return fmt.Sprintf("\nВы получили %d монет", giveMoney)
 }
 
-func checkLetter(letter rune, answer string) string { //Проверка угаданной буквы
+//checkLetter проверка угаданной буквы.Функция получает на вход символ который ввел пользователь и верный ответ,возвращает строку с сообщением о верности ответа.
+func checkLetter(letter rune, answer string) string {
 	var buffer = []rune(tryAnswer)
 
 	if strings.Contains(answer, string(letter)) && !strings.Contains(tryAnswer, string(letter)) {
@@ -96,9 +106,9 @@ func main() {
 	rand.Seed(time.Now().Unix()) //Опора для генератора чисел
 
 	for hp != 0 { //Бесконечный цикл ,пока идет игра
-		var isGame = true
-		tryAnswer = ""
-		quest, answer := generationQuest(createQuest())
+		var isGame = true//Запускаем игру
+		tryAnswer = ""//Обнуляем слово игрока
+		quest, answer := generationQuest(createQuest())//Сохраняем случайный вопрос и ответ
 		codingAnswer(answer)
 		fmt.Println(firstOut(quest))
 
